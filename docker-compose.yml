@@ -1,0 +1,49 @@
+services:
+  neo4j:
+    image: neo4j:5-community
+    container_name: neo4j
+
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+
+    environment:
+      NEO4J_AUTH: "${NEO4J_USERNAME}/${NEO4J_PASSWORD}"
+
+      # Allow LOAD CSV to read files from Neo4j's import directory
+      NEO4J_server_directories_import: "/var/lib/neo4j/import"
+
+      # Basic memory configuration
+      NEO4J_server_memory_heap_initial__size: "512m"
+      NEO4J_server_memory_heap_max__size: "1G"
+      NEO4J_server_memory_pagecache_size: "512m"
+
+    volumes:
+      # Persistent Neo4j database storage
+      - neo4j-data:/data
+
+      # Neo4j logs
+      - neo4j-logs:/logs
+
+      # CSV files used by LOAD CSV
+      - ./data/neo4j-import:/var/lib/neo4j/import
+
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "cypher-shell -u ${NEO4J_USERNAME} -p ${NEO4J_PASSWORD} 'RETURN 1;' || exit 1"
+        ]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+      start_period: 30s
+
+    restart: unless-stopped
+
+volumes:
+  neo4j-data:
+    name: neo4j-data
+
+  neo4j-logs:
+    name: neo4j-logs

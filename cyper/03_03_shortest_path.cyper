@@ -1,0 +1,24 @@
+# identifying two pentents with multiple paths - searches for patents connected through between three and six citation steps
+MATCH path =
+    (start:Patent)-[:CITES*3..6]-(end:Patent)
+
+WHERE elementId(start) < elementId(end)
+
+RETURN start.patent_id AS start_patent,
+       end.patent_id AS end_patent,
+       length(path) AS path_length
+
+ORDER BY path_length DESC
+LIMIT 10;
+
+// Query 3: Find the shortest structural citation path
+
+MATCH (start:Patent {patent_id: "3858800"}),
+      (end:Patent {patent_id: "3858801"})
+
+MATCH path = shortestPath(
+    (start)-[:CITES*..10]-(end)
+)
+
+RETURN path,
+       length(path) AS shortest_path_length;

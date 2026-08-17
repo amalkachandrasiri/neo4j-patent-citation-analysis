@@ -1,0 +1,19 @@
+// Query 2: Top 10 patents by incoming degree centrality
+
+MATCH (citing:Patent)-[:CITES]->(cited:Patent)
+
+RETURN cited.patent_id AS patent_id,
+       count(citing) AS incoming_citations
+
+ORDER BY incoming_citations DESC
+LIMIT 10;
+
+// execution profile
+PROFILE
+MATCH (citing:Patent)-[:CITES]->(cited:Patent)
+
+RETURN cited.patent_id AS patent_id,
+       count(citing) AS incoming_citations
+
+ORDER BY incoming_citations DESC
+LIMIT 10;

@@ -1,0 +1,8 @@
+.env
+data/raw/*
+data/processed/*
+data/neo4j-import/*
+neo4j-data/
+neo4j-logs/
+__pycache__/
+*.pyc
